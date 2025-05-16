@@ -1,0 +1,1115 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cronograma v4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Temas de colores */
+        :root {
+            --primary-color: #ff80ab;
+            --primary-dark: #ff4081;
+            --primary-light: #ffa4c1;
+            --primary-bg: #fff0f5;
+            --gradient-start: #ff9a9e;
+            --gradient-end: #fad0c4;
+        }
+        
+        /* Tema Rosa (default) */
+        .theme-pink {
+            --primary-color: #ff80ab;
+            --primary-dark: #ff4081;
+            --primary-light: #ffa4c1;
+            --primary-bg: #fff0f5;
+            --gradient-start: #ff9a9e;
+            --gradient-end: #fad0c4;
+        }
+        
+        /* Tema Azul */
+        .theme-blue {
+            --primary-color: #64b5f6;
+            --primary-dark: #2196f3;
+            --primary-light: #90caf9;
+            --primary-bg: #e3f2fd;
+            --gradient-start: #4facfe;
+            --gradient-end: #00f2fe;
+        }
+        
+        /* Tema Verde */
+        .theme-green {
+            --primary-color: #81c784;
+            --primary-dark: #4caf50;
+            --primary-light: #a5d6a7;
+            --primary-bg: #e8f5e9;
+            --gradient-start: #43e97b;
+            --gradient-end: #38f9d7;
+        }
+        
+        /* Tema Morado */
+        .theme-purple {
+            --primary-color: #9575cd;
+            --primary-dark: #673ab7;
+            --primary-light: #b39ddb;
+            --primary-bg: #ede7f6;
+            --gradient-start: #a18cd1;
+            --gradient-end: #fbc2eb;
+        }
+        
+        /* Tema Naranja */
+        .theme-orange {
+            --primary-color: #ffb74d;
+            --primary-dark: #ff9800;
+            --primary-light: #ffcc80;
+            --primary-bg: #fff3e0;
+            --gradient-start: #fa709a;
+            --gradient-end: #fee140;
+        }
+        
+        /* Tema Turquesa */
+        .theme-teal {
+            --primary-color: #4db6ac;
+            --primary-dark: #009688;
+            --primary-light: #80cbc4;
+            --primary-bg: #e0f2f1;
+            --gradient-start: #0ba360;
+            --gradient-end: #3cba92;
+        }
+        
+        /* Tema Rojo */
+        .theme-red {
+            --primary-color: #e57373;
+            --primary-dark: #f44336;
+            --primary-light: #ef9a9a;
+            --primary-bg: #ffebee;
+            --gradient-start: #ff5858;
+            --gradient-end: #ff8787;
+        }
+        
+        /* Tema Amarillo */
+        .theme-yellow {
+            --primary-color: #fff176;
+            --primary-dark: #ffd600;
+            --primary-light: #fff59d;
+            --primary-bg: #fffde7;
+            --gradient-start: #f6d365;
+            --gradient-end: #fda085;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+        }
+        
+        .primary-gradient {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 99%, var(--gradient-end) 100%);
+        }
+        
+        .event-card {
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Aseguramos que los botones del formulario siempre sean visibles */
+        .form-buttons {
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+            padding: 15px 0;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        /* Animación para el mensaje de no resultados */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .search-no-results {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Estilos para el selector de tema */
+        .theme-selector {
+            position: relative;
+        }
+        
+        .theme-palette {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 12px;
+            z-index: 100;
+            width: 220px;
+            display: none;
+        }
+        
+        .theme-palette.active {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
+        }
+        
+        /* Estilos para el switch de notificaciones */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Notificación */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 350px;
+            background-color: white;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            padding: 16px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+        
+        /* Animación de pulso para la notificación */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="theme-pink">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="primary-gradient text-white shadow-lg">
+            <div class="container mx-auto p-4 flex justify-between items-center">
+                <h1 class="text-3xl font-bold">Mi Cronograma</h1>
+                <div class="flex items-center gap-2">
+                    <div class="theme-selector">
+                        <button id="themeBtn" class="bg-white text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors tooltip">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="tooltiptext">Cambiar tema</span>
+                        </button>
+                        <div id="themePalette" class="theme-palette">
+                            <h3 class="text-gray-700 font-medium mb-3">Elige un tema</h3>
+                            <div class="grid grid-cols-4 gap-3">
+                                <div class="color-option theme-pink-option active" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4);" data-theme="pink" title="Rosa"></div>
+                                <div class="color-option theme-blue-option" style="background: linear-gradient(135deg, #4facfe, #00f2fe);" data-theme="blue" title="Azul"></div>
+                                <div class="color-option theme-green-option" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" data-theme="green" title="Verde"></div>
+                                <div class="color-option theme-purple-option" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);" data-theme="purple" title="Morado"></div>
+                                <div class="color-option theme-orange-option" style="background: linear-gradient(135deg, #fa709a, #fee140);" data-theme="orange" title="Naranja"></div>
+                                <div class="color-option theme-teal-option" style="background: linear-gradient(135deg, #0ba360, #3cba92);" data-theme="teal" title="Turquesa"></div>
+                                <div class="color-option theme-red-option" style="background: linear-gradient(135deg, #ff5858, #ff8787);" data-theme="red" title="Rojo"></div>
+                                <div class="color-option theme-yellow-option" style="background: linear-gradient(135deg, #f6d365, #fda085);" data-theme="yellow" title="Amarillo"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="addEventBtn" class="bg-white text-gray-700 px-4 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Nuevo Evento
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto p-4 flex-grow">
+            <!-- Filter and Search -->
+            <div class="mb-6 bg-white p-4 rounded-lg shadow-md">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-grow relative">
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="Buscar eventos..." class="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50" style="border-color: var(--primary-light); --tw-ring-color: var(--primary-light);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <button id="clearSearchBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <select id="filterSelect" class="p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 bg-white" style="border-color: var(--primary-light); --tw-ring-color: var(--primary-light);">
+                            <option value="all">Todos los eventos</option>
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta semana</option>
+                            <option value="month">Este mes</option>
+                            <option value="upcoming">Próximos</option>
+                            <option value="past">Pasados</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Results Info -->
+            <div id="searchResultsInfo" class="mb-4 hidden">
+                <div class="bg-opacity-10 border rounded-lg p-3 flex items-center" style="background-color: var(--primary-light); border-color: var(--primary-light);">
+                    <span id="searchResultsCount" class="font-medium" style="color: var(--primary-dark);"></span>
+                    <button id="clearFiltersBtn" class="ml-auto font-medium flex items-center" style="color: var(--primary-dark);">
+                        <span>Limpiar filtros</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Events List -->
+            <div id="eventsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Events will be added here dynamically -->
+            </div>
+
+            <!-- No Search Results -->
+            <div id="noSearchResults" class="hidden search-no-results text-center py-12 bg-white rounded-lg shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--primary-color);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">No se encontraron resultados</h3>
+                <p class="text-gray-500 mb-4">No hay eventos que coincidan con tu búsqueda</p>
+                <button id="clearSearchResultsBtn" class="btn-outline px-6 py-2 rounded-full font-medium">
+                    Limpiar búsqueda
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--primary-color);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">No hay eventos</h3>
+                <p class="text-gray-500 mb-4">Comienza agregando tu primer evento al cronograma</p>
+                <button id="emptyStateAddBtn" class="btn-primary text-white px-6 py-2 rounded-full font-semibold">
+                    Agregar Evento
+                </button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white py-4 border-t border-gray-100">
+            <div class="container mx-auto text-center text-gray-500">
+                <p>Mi Cronograma Personal © 2023</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Add/Edit Event Modal -->
+    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="primary-gradient text-white py-4 px-6">
+                <h3 id="modalTitle" class="text-xl font-semibold">Agregar Evento</h3>
+            </div>
+            <form id="eventForm" class="p-6">
+                <input type="hidden" id="eventId">
+                <div class="mb-4">
+                    <label for="eventName" class="block text-gray-700 font-medium mb-2">Nombre del Evento*</label>
+                    <input type="text" id="eventName" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50" style="--tw-ring-color: var(--primary-light);" required>
+                </div>
+                <div class="mb-4">
+                    <label for="eventDate" class="block text-gray-700 font-medium mb-2">Fecha*</label>
+                    <input type="date" id="eventDate" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50" style="--tw-ring-color: var(--primary-light);" required>
+                </div>
+                <div class="mb-4">
+                    <label for="eventTime" class="block text-gray-700 font-medium mb-2">Hora*</label>
+                    <input type="time" id="eventTime" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50" style="--tw-ring-color: var(--primary-light);" required>
+                </div>
+                <div class="mb-4">
+                    <label for="eventDescription" class="block text-gray-700 font-medium mb-2">Descripción</label>
+                    <textarea id="eventDescription" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50" style="--tw-ring-color: var(--primary-light);"></textarea>
+                </div>
+                
+                <!-- Notificación -->
+                <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-gray-700 font-medium">Notificación</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notificationToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div id="notificationOptions" class="hidden">
+                        <label for="notificationTime" class="block text-gray-600 text-sm mb-2">Avisar con anticipación:</label>
+                        <select id="notificationTime" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 text-sm" style="--tw-ring-color: var(--primary-light);">
+                            <option value="0">A la hora exacta</option>
+                            <option value="5">5 minutos antes</option>
+                            <option value="10">10 minutos antes</option>
+                            <option value="15">15 minutos antes</option>
+                            <option value="30">30 minutos antes</option>
+                            <option value="60">1 hora antes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-buttons flex justify-end gap-2 mt-6">
+                    <button type="button" id="cancelBtn" class="btn-outline px-5 py-2 rounded-lg font-medium">Cancelar</button>
+                    <button type="submit" id="saveBtn" class="btn-primary text-white px-5 py-2 rounded-lg font-medium">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirmar eliminación</h3>
+                <p class="text-gray-600 mb-6">¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.</p>
+                <input type="hidden" id="deleteEventId">
+                <div class="flex justify-end gap-2">
+                    <button id="cancelDeleteBtn" class="btn-outline px-5 py-2 rounded-lg font-medium">Cancelar</button>
+                    <button id="confirmDeleteBtn" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg font-medium transition-colors">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Template -->
+    <div id="notificationTemplate" class="notification hidden">
+        <div class="flex items-start">
+            <div class="mr-3 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--primary-color);">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-semibold text-gray-800 notification-title">Título de la notificación</h4>
+                <p class="text-gray-600 text-sm notification-message">Mensaje de la notificación</p>
+            </div>
+            <button class="notification-close ml-3 text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Notification Sound -->
+    <audio id="notificationSound">
+        <source src="data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAAFgAAAyBJIExvdmUgWW91IFNvIE11Y2gATURJQQAAAA0AAAMWV2hhdHNBcHAAVFBFMQAAAAwAAANXaGF0c0FwcAAA" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const eventsList = document.getElementById('eventsList');
+            const emptyState = document.getElementById('emptyState');
+            const eventModal = document.getElementById('eventModal');
+            const deleteModal = document.getElementById('deleteModal');
+            const eventForm = document.getElementById('eventForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const searchInput = document.getElementById('searchInput');
+            const filterSelect = document.getElementById('filterSelect');
+            const noSearchResults = document.getElementById('noSearchResults');
+            const searchResultsInfo = document.getElementById('searchResultsInfo');
+            const searchResultsCount = document.getElementById('searchResultsCount');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            const clearSearchResultsBtn = document.getElementById('clearSearchResultsBtn');
+            const themeBtn = document.getElementById('themeBtn');
+            const themePalette = document.getElementById('themePalette');
+            const notificationToggle = document.getElementById('notificationToggle');
+            const notificationOptions = document.getElementById('notificationOptions');
+            const notificationSound = document.getElementById('notificationSound');
+            const notificationTemplate = document.getElementById('notificationTemplate');
+            
+            // Buttons
+            const addEventBtn = document.getElementById('addEventBtn');
+            const emptyStateAddBtn = document.getElementById('emptyStateAddBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            
+            // Form Fields
+            const eventIdField = document.getElementById('eventId');
+            const eventNameField = document.getElementById('eventName');
+            const eventDateField = document.getElementById('eventDate');
+            const eventTimeField = document.getElementById('eventTime');
+            const eventDescriptionField = document.getElementById('eventDescription');
+            const deleteEventIdField = document.getElementById('deleteEventId');
+            const notificationTimeField = document.getElementById('notificationTime');
+            
+            // Load events from localStorage
+            let events = JSON.parse(localStorage.getItem('events')) || [];
+            
+            // Load theme from localStorage
+            const savedTheme = localStorage.getItem('theme') || 'pink';
+            setTheme(savedTheme);
+            
+            // Initialize the app
+            renderEvents();
+            startNotificationChecker();
+            
+            // Event Listeners
+            addEventBtn.addEventListener('click', openAddEventModal);
+            emptyStateAddBtn.addEventListener('click', openAddEventModal);
+            cancelBtn.addEventListener('click', closeEventModal);
+            cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+            confirmDeleteBtn.addEventListener('click', deleteEvent);
+            eventForm.addEventListener('submit', saveEvent);
+            searchInput.addEventListener('input', handleSearch);
+            filterSelect.addEventListener('change', filterEvents);
+            clearSearchBtn.addEventListener('click', clearSearch);
+            clearFiltersBtn.addEventListener('click', clearAllFilters);
+            clearSearchResultsBtn.addEventListener('click', clearAllFilters);
+            themeBtn.addEventListener('click', toggleThemePalette);
+            notificationToggle.addEventListener('change', toggleNotificationOptions);
+            
+            // Theme color options
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    setTheme(theme);
+                    localStorage.setItem('theme', theme);
+                    toggleThemePalette();
+                    
+                    // Update active state
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+            
+            // Close theme palette when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!themeBtn.contains(event.target) && !themePalette.contains(event.target)) {
+                    themePalette.classList.remove('active');
+                }
+            });
+            
+            // Functions
+            function renderEvents(filteredEvents = null) {
+                const eventsToRender = filteredEvents || events;
+                eventsList.innerHTML = '';
+                
+                // Handle empty states
+                if (events.length === 0) {
+                    // No events at all
+                    emptyState.classList.remove('hidden');
+                    noSearchResults.classList.add('hidden');
+                    searchResultsInfo.classList.add('hidden');
+                    return;
+                } else {
+                    emptyState.classList.add('hidden');
+                    
+                    if (filteredEvents && filteredEvents.length === 0) {
+                        // No search results
+                        noSearchResults.classList.remove('hidden');
+                        eventsList.classList.add('hidden');
+                        return;
+                    } else {
+                        noSearchResults.classList.add('hidden');
+                        eventsList.classList.remove('hidden');
+                    }
+                }
+                
+                // Show search results count if filtering
+                if (searchInput.value || filterSelect.value !== 'all') {
+                    searchResultsInfo.classList.remove('hidden');
+                    searchResultsCount.textContent = `${eventsToRender.length} evento${eventsToRender.length !== 1 ? 's' : ''} encontrado${eventsToRender.length !== 1 ? 's' : ''}`;
+                } else {
+                    searchResultsInfo.classList.add('hidden');
+                }
+                
+                // Sort events by date and time
+                eventsToRender.sort((a, b) => {
+                    const dateA = new Date(`${a.date}T${a.time}`);
+                    const dateB = new Date(`${b.date}T${b.time}`);
+                    return dateA - dateB;
+                });
+                
+                eventsToRender.forEach(event => {
+                    const eventDate = new Date(`${event.date}T${event.time}`);
+                    const now = new Date();
+                    const isPast = eventDate < now;
+                    
+                    const formattedDate = eventDate.toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    const formattedTime = eventDate.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    // Calculate time remaining
+                    let timeRemaining = '';
+                    if (!isPast) {
+                        const diffMs = eventDate - now;
+                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                        const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                        
+                        if (diffDays > 0) {
+                            timeRemaining = `En ${diffDays} día${diffDays !== 1 ? 's' : ''}`;
+                        } else if (diffHours > 0) {
+                            timeRemaining = `En ${diffHours} hora${diffHours !== 1 ? 's' : ''}`;
+                        } else if (diffMinutes > 0) {
+                            timeRemaining = `En ${diffMinutes} minuto${diffMinutes !== 1 ? 's' : ''}`;
+                        } else {
+                            timeRemaining = 'Ahora mismo';
+                        }
+                    }
+                    
+                    const eventCard = document.createElement('div');
+                    eventCard.className = `event-card bg-white rounded-lg shadow-md overflow-hidden ${isPast ? 'opacity-75' : ''}`;
+                    
+                    let notificationBadge = '';
+                    if (event.notification) {
+                        notificationBadge = `
+                            <div class="absolute top-2 right-2 tooltip">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                                </svg>
+                                <span class="tooltiptext">Notificación activada</span>
+                            </div>
+                        `;
+                    }
+                    
+                    eventCard.innerHTML = `
+                        <div class="primary-gradient text-white p-4 relative">
+                            <h3 class="font-semibold text-lg pr-6">${event.name}</h3>
+                            ${notificationBadge}
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center mb-3 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>${formattedDate}</span>
+                            </div>
+                            <div class="flex items-center mb-3 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>${formattedTime}</span>
+                            </div>
+                            ${!isPast && timeRemaining ? `
+                                <div class="flex items-center mb-3 font-medium" style="color: var(--primary-dark);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>${timeRemaining}</span>
+                                </div>
+                            ` : ''}
+                            ${event.description ? `<p class="text-gray-700 mb-4">${event.description}</p>` : ''}
+                            <div class="flex justify-end gap-2 mt-2">
+                                <button class="edit-btn btn-outline px-4 py-1 rounded-lg text-sm" data-id="${event.id}">Editar</button>
+                                <button class="delete-btn bg-red-100 text-red-600 border-2 border-red-200 px-4 py-1 rounded-lg text-sm hover:bg-red-200 transition-colors" data-id="${event.id}">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    eventsList.appendChild(eventCard);
+                    
+                    // Add event listeners to the buttons
+                    eventCard.querySelector('.edit-btn').addEventListener('click', function() {
+                        openEditEventModal(event.id);
+                    });
+                    
+                    eventCard.querySelector('.delete-btn').addEventListener('click', function() {
+                        openDeleteModal(event.id);
+                    });
+                });
+            }
+            
+            function openAddEventModal() {
+                modalTitle.textContent = 'Agregar Evento';
+                eventForm.reset();
+                eventIdField.value = '';
+                
+                // Set default date to today
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                eventDateField.value = formattedDate;
+                
+                // Set default time to current time
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                eventTimeField.value = `${hours}:${minutes}`;
+                
+                // Reset notification toggle
+                notificationToggle.checked = false;
+                notificationOptions.classList.add('hidden');
+                
+                eventModal.classList.remove('hidden');
+            }
+            
+            function openEditEventModal(eventId) {
+                const event = events.find(e => e.id === eventId);
+                if (!event) return;
+                
+                modalTitle.textContent = 'Editar Evento';
+                eventIdField.value = event.id;
+                eventNameField.value = event.name;
+                eventDateField.value = event.date;
+                eventTimeField.value = event.time;
+                eventDescriptionField.value = event.description || '';
+                
+                // Set notification settings
+                notificationToggle.checked = !!event.notification;
+                if (event.notification) {
+                    notificationOptions.classList.remove('hidden');
+                    notificationTimeField.value = event.notificationTime || '0';
+                } else {
+                    notificationOptions.classList.add('hidden');
+                }
+                
+                eventModal.classList.remove('hidden');
+            }
+            
+            function closeEventModal() {
+                eventModal.classList.add('hidden');
+            }
+            
+            function openDeleteModal(eventId) {
+                deleteEventIdField.value = eventId;
+                deleteModal.classList.remove('hidden');
+            }
+            
+            function closeDeleteModal() {
+                deleteModal.classList.add('hidden');
+            }
+            
+            function saveEvent(e) {
+                e.preventDefault();
+                
+                // Validar que los campos requeridos estén completos
+                if (!eventNameField.value || !eventDateField.value || !eventTimeField.value) {
+                    showMessage('Por favor completa todos los campos obligatorios', 'error');
+                    return;
+                }
+                
+                const eventId = eventIdField.value;
+                const eventData = {
+                    name: eventNameField.value,
+                    date: eventDateField.value,
+                    time: eventTimeField.value,
+                    description: eventDescriptionField.value,
+                    notification: notificationToggle.checked,
+                    notificationTime: notificationToggle.checked ? notificationTimeField.value : null
+                };
+                
+                if (eventId) {
+                    // Edit existing event
+                    const index = events.findIndex(e => e.id === eventId);
+                    if (index !== -1) {
+                        events[index] = { ...events[index], ...eventData };
+                    }
+                } else {
+                    // Add new event
+                    const newEvent = {
+                        id: Date.now().toString(),
+                        ...eventData
+                    };
+                    events.push(newEvent);
+                }
+                
+                // Save to localStorage and update UI
+                localStorage.setItem('events', JSON.stringify(events));
+                renderEvents();
+                closeEventModal();
+                
+                // Show success message
+                showMessage(eventId ? 'Evento actualizado con éxito' : 'Evento agregado con éxito', 'success');
+            }
+            
+            function deleteEvent() {
+                const eventId = deleteEventIdField.value;
+                events = events.filter(e => e.id !== eventId);
+                
+                // Save to localStorage and update UI
+                localStorage.setItem('events', JSON.stringify(events));
+                renderEvents();
+                closeDeleteModal();
+                
+                // Show success message
+                showMessage('Evento eliminado con éxito', 'delete');
+            }
+            
+            function handleSearch() {
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                // Show/hide clear button
+                if (searchTerm) {
+                    clearSearchBtn.classList.remove('hidden');
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                }
+                
+                filterEvents();
+            }
+            
+            function filterEvents() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterValue = filterSelect.value;
+                
+                let filteredEvents = events;
+                
+                // Apply search filter
+                if (searchTerm) {
+                    filteredEvents = filteredEvents.filter(event => 
+                        event.name.toLowerCase().includes(searchTerm) || 
+                        (event.description && event.description.toLowerCase().includes(searchTerm))
+                    );
+                }
+                
+                // Apply date filter
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const now = new Date();
+                
+                if (filterValue === 'today') {
+                    filteredEvents = filteredEvents.filter(event => {
+                        const eventDate = new Date(event.date);
+                        eventDate.setHours(0, 0, 0, 0);
+                        return eventDate.getTime() === today.getTime();
+                    });
+                } else if (filterValue === 'week') {
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekStart.getDate() + 6);
+                    
+                    filteredEvents = filteredEvents.filter(event => {
+                        const eventDate = new Date(event.date);
+                        eventDate.setHours(0, 0, 0, 0);
+                        return eventDate >= weekStart && eventDate <= weekEnd;
+                    });
+                } else if (filterValue === 'month') {
+                    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    
+                    filteredEvents = filteredEvents.filter(event => {
+                        const eventDate = new Date(event.date);
+                        eventDate.setHours(0, 0, 0, 0);
+                        return eventDate >= monthStart && eventDate <= monthEnd;
+                    });
+                } else if (filterValue === 'upcoming') {
+                    filteredEvents = filteredEvents.filter(event => {
+                        const eventDateTime = new Date(`${event.date}T${event.time}`);
+                        return eventDateTime >= now;
+                    });
+                } else if (filterValue === 'past') {
+                    filteredEvents = filteredEvents.filter(event => {
+                        const eventDateTime = new Date(`${event.date}T${event.time}`);
+                        return eventDateTime < now;
+                    });
+                }
+                
+                renderEvents(filteredEvents);
+            }
+            
+            function clearSearch() {
+                searchInput.value = '';
+                clearSearchBtn.classList.add('hidden');
+                filterEvents();
+            }
+            
+            function clearAllFilters() {
+                searchInput.value = '';
+                filterSelect.value = 'all';
+                clearSearchBtn.classList.add('hidden');
+                renderEvents();
+            }
+            
+            function toggleThemePalette() {
+                themePalette.classList.toggle('active');
+            }
+            
+            function setTheme(theme) {
+                document.body.className = `theme-${theme}`;
+                
+                // Update active state in palette
+                document.querySelectorAll('.color-option').forEach(option => {
+                    if (option.getAttribute('data-theme') === theme) {
+                        option.classList.add('active');
+                    } else {
+                        option.classList.remove('active');
+                    }
+                });
+            }
+            
+            function toggleNotificationOptions() {
+                if (notificationToggle.checked) {
+                    notificationOptions.classList.remove('hidden');
+                } else {
+                    notificationOptions.classList.add('hidden');
+                }
+            }
+            
+            function startNotificationChecker() {
+                // Check for notifications every minute
+                setInterval(checkNotifications, 60000);
+                
+                // Also check immediately on page load
+                checkNotifications();
+            }
+            
+            function checkNotifications() {
+                const now = new Date();
+                
+                events.forEach(event => {
+                    if (!event.notification) return;
+                    
+                    const eventDateTime = new Date(`${event.date}T${event.time}`);
+                    const notificationMinutes = parseInt(event.notificationTime || '0');
+                    
+                    // Calculate when notification should trigger
+                    const notificationTime = new Date(eventDateTime);
+                    notificationTime.setMinutes(notificationTime.getMinutes() - notificationMinutes);
+                    
+                    // Check if it's time to show notification
+                    const timeDiff = Math.abs(now - notificationTime);
+                    if (timeDiff <= 60000) { // Within 1 minute
+                        // Check if we've already shown this notification
+                        const notificationKey = `notified_${event.id}_${event.date}_${event.time}`;
+                        if (!localStorage.getItem(notificationKey)) {
+                            showNotification(event, notificationMinutes);
+                            localStorage.setItem(notificationKey, 'true');
+                        }
+                    }
+                });
+            }
+            
+            function showNotification(event, minutesBefore) {
+                // Create notification element
+                const notification = notificationTemplate.cloneNode(true);
+                notification.id = `notification-${Date.now()}`;
+                notification.classList.remove('hidden');
+                
+                // Set notification content
+                const title = notification.querySelector('.notification-title');
+                const message = notification.querySelector('.notification-message');
+                
+                title.textContent = event.name;
+                
+                if (minutesBefore > 0) {
+                    message.textContent = `Este evento comenzará en ${minutesBefore} minutos`;
+                } else {
+                    message.textContent = '¡Este evento está comenzando ahora!';
+                }
+                
+                // Add to document
+                document.body.appendChild(notification);
+                
+                // Add pulse animation
+                notification.classList.add('pulse');
+                
+                // Show notification with animation
+                setTimeout(() => {
+                    notification.classList.add('show');
+                    
+                    // Play sound
+                    try {
+                        notificationSound.play();
+                    } catch (e) {
+                        console.log('No se pudo reproducir el sonido de notificación');
+                    }
+                }, 100);
+                
+                // Add close button functionality
+                const closeBtn = notification.querySelector('.notification-close');
+                closeBtn.addEventListener('click', () => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                });
+                
+                // Auto close after 10 seconds
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 300);
+                    }
+                }, 10000);
+            }
+            
+            function showMessage(text, type) {
+                // Remove any existing messages
+                const existingMessages = document.querySelectorAll('.message-toast');
+                existingMessages.forEach(msg => msg.remove());
+                
+                // Create message element
+                const message = document.createElement('div');
+                message.className = 'message-toast fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50';
+                message.textContent = text;
+                
+                // Set color based on type
+                if (type === 'success') {
+                    message.style.backgroundColor = 'var(--primary-color)';
+                    message.classList.add('text-white');
+                } else if (type === 'error') {
+                    message.classList.add('bg-red-500', 'text-white');
+                } else if (type === 'delete') {
+                    message.classList.add('bg-red-500', 'text-white');
+                }
+                
+                document.body.appendChild(message);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            }
+            
+            // Request notification permission
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9407cf45e3cd911d',t:'MTc0NzM2NjM2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
